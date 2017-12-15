@@ -4,60 +4,40 @@
  * @flow
  */
 
-import React, { Component } from 'react'
-import * as zoom from 'd3-zoom'
-import * as scale from 'd3-scale'
-
+import React, { Component } from 'react';
+import ListScreen from './views/section-list'
+import { DrawerNavigator } from 'react-navigation'
+import { D3View } from './views/d3'
 import {
-  ART,
-  Dimensions,
+  Platform,
   StyleSheet,
+  Text,
   View,
-  PanResponder
-} from 'react-native'
-const {
-Group,
-Shape,
-Surface,
-Path
-} = ART
-const width = 300
-const height = 300
-const PaddingSize = 20;
-const dimensionWindow = Dimensions.get('window');
-const graphHeight = height - PaddingSize * 2;
-const graphWidth = width - PaddingSize * 2;
-export default class App extends Component<{}> {
+  Button
+} from 'react-native';
+import { SwipeScreen } from './views/swipe'
+
+const instructions = 'Click Me To Start'
+
+class Home extends Component {
+  static navigationOptions = {
+    drawerLabel: 'Home'
+  }
   constructor(props) {
-    super(props)
-    this.state = {
-      rescaledX: 1,
-      rescaledY: 1
-    }
+    super(props);
+    this.openDrawer = this.openDrawer.bind(this)
   }
-  componentWillMount() {
-    this._panResponder = PanResponder.create({
-        onMoveShouldSetPanResponder: (evt, gestureState) => true,
-        onPanResponderMove: (event, { dx, dy }) => {
-            // const zoomIdentity = zoom.zoomIdentity.translate(dx, dy)
-            // this._onDrag(zoomIdentity)
-        },
-    });
-  }
-  _onDrag(zoomIdentity) {
-    // this.setState({
-    //     rescaledX: zoomIdentity.rescaleX(this.state.rescaledX),
-    //     rescaledY: zoomIdentity.rescaleY(this.state.rescaledY)
-    //   })
+  openDrawer() {
+    this.props.navigation.navigate('DrawerOpen');
   }
   render() {
     return (
-      <View {...this._panResponder.panHandlers} style={styles.container}>
-        <Surface width={graphWidth} height={graphHeight}>
-          <Group x={0} y={0}>
-             <Shape d={ new Path().moveTo(0,0).lineTo(200 * this.state.rescaledX, 200 * this.state.rescaledY) } stroke="black" strokeWidth={10}/>
-           </Group>
-        </Surface>
+      <View style={styles.container}>
+        <Text style={styles.welcome}>
+          Welcome to Evan's React Native Demo!
+        </Text>
+
+        <Button title={instructions} onPress={this.openDrawer}></Button>
       </View>
     );
   }
@@ -81,3 +61,18 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
 });
+const App = DrawerNavigator({
+  Home: {
+    screen: Home,
+  },
+  'Pie Chart': {
+    screen: D3View
+  },
+  Swipe: {
+    screen: SwipeScreen
+  },
+  List: {
+    screen: ListScreen
+  }
+})
+export default App
